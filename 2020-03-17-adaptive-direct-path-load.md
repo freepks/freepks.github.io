@@ -36,13 +36,12 @@ serial full table scan 에서도 적극적으로 direct path read 를 사용하�
 Cleanout 되지 않은 블럭이 많은 테이블이라면 direct path read 는 비용이 크다고 할 수 있는 것이다. 특히 반복해서 access 한다면 더욱 더!
 
 
-<span style="font: bold arial;color: gray;">[session A]</span>
+<span style="font: bold arial;color: navy;">[session A]</span>
 
 <span
 style="
-font-weight: bold; 
 color: navy;
-font-family: arial;
+font-family: serif;
 ">
 update dir_test set c2 = 'BBBBBBBBB' 
 where rownum <= 1000000;<br/>
@@ -50,7 +49,7 @@ alter system flush buffer_cache;<br/>
 commit; <br/><br/>
 </span>
 
-<span style="font: bold 굴림;color: gray;">[session B]</span>
+<span style="font: bold arial;color: navy;">[session B]</span>
 
 <img src="https://freepks.github.io/images/direct-path-read-test-01.PNG" width="600">
 
