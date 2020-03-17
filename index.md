@@ -26,5 +26,5 @@ $ git commit -m "commit message"
 $ git push origin [git username]
 ```
 
-[포스트 작성연습-1](2020-03-17-포스트-작성연습-1.md)
-[2020-03-15-DB-Pool-For-Event](2020-03-15-DB-Pool-For-Event.md)
+[포스트 작성연습-1](2020-03-17-포스트-작성연습-1.md)<br/>
+[2020-03-15-DB-Pool-For-Event](2020-03-15-DB-Pool-For-Event.md)<br/>
