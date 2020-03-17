@@ -38,10 +38,12 @@ Cleanout 되지 않은 블럭이 많은 테이블이라면 direct path read 는 
 
 <span style="font: bold 굴림;color: green;">[session A]</span>
 
+<span style="font: courier new;color: gray;">
 update dir_test set c2 = 'BBBBBBBBB' 
 where rownum <= 1000000;<br/>
 alter system flush buffer_cache;<br/>
 commit; <br/><br/>
+</span>
 
 <span style="font: bold 굴림;color: green;">[session B]</span>
 
