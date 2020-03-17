@@ -49,7 +49,7 @@ commit;
 
 이제 좀 더 나아가 얘기하고 싶은게 있다. 그것은 **latch: row cache objects** 이벤트와 관련되는 이야기이다.
 
-당시 내가 만난 그 시스템은 매우 큰 규모였다. RAC node 수만 5개가 넘었고 core 수는 700 이 넘었다. 그래서인지 online 되어있는 undo segment 의 수가 만개가 넘었다.
+당시 내가 만난 그 시스템은 매우 큰 규모였다. RAC node 수만 6개에 CPU core 수는 700 이 넘었다. 그래서인지 online 되어있는 undo segment 의 수가 10,000개가 넘었다.
 배치용으로 쓰는 인스턴스에서는 고질적으로 **latch: row cache object** 이벤트가 계속 발생했고, 한번은 이 현상이 심해지면서 인스턴스가 hang 상태가 되어 긴급하게 restartup 한 적도 있었다. 
 나중에야 비로소 그 원인을 알 수 있게 되었는데, 바로 direct path read 와 관련이 있었던 것이다. 
 
