@@ -1,7 +1,7 @@
 ---
 title: "DBCP Connection Pool 연결 대기 지연 현상"
 last_modified_at: 2020-03-15T00:00:00-00:00
-classes: single
+classes: wide
 categories:
   - Cloud
   - Tomcat
