@@ -31,7 +31,8 @@ serial full table scan 에서도 적극적으로 direct path read 를 사용하�
 
 아래의 간단한 테스트를 먼저 보면, delayed block cleanout 을 유발시키기 위해 update 후에 바로 buffer cache 를 flush out 시킨 후 commit 시켰다.
 
-이제 CASE 각각의 경우의 결과를 비교해 보면, 우선 CASE 1. non-direct path read on unclean blocks 의 경우 Run 1. 에서 block cleanout 이 완료되었으므로 Run 2,3 에서는 cleanout 이 수행될 필요가 없다. 반면, CASE 2. direct path read on unclean blocks 경우엔 매 수행 때마다 block cleanout 이 필요한 상태로 남아있는 것을 볼 수 있다. direct path read 방식으로 블럭이 액세스 될 때는 block cleanout 을 수행하지 않기 때문이다. 이 때문에 cleanout 되지 않은 블럭을 읽을 때마다 consistent gets - examination 이 발생되며 이 수치는 session logical reads 에 더해지게 된다. 즉, logical read 가 늘어나는 것이고 DB 는 무거워지는 것이다.
+이제 CASE 각각의 경우의 결과를 비교해 보면,<br/> 
+우선 CASE 1. non-direct path read on unclean blocks 의 경우 Run 1. 에서 block cleanout 이 완료되었으므로 Run 2,3 에서는 cleanout 이 수행될 필요가 없다. 반면, CASE 2. direct path read on unclean blocks 경우엔 매 수행 때마다 block cleanout 이 필요한 상태로 남아있는 것을 볼 수 있다. direct path read 방식으로 블럭이 액세스 될 때는 block cleanout 을 수행하지 않기 때문이다. 이 때문에 cleanout 되지 않은 블럭을 읽을 때마다 consistent gets - examination 이 발생되며 이 수치는 session logical reads 에 더해지게 된다. 즉, logical read 가 늘어나는 것이고 DB 는 무거워지는 것이다.
 Cleanout 되지 않은 블럭이 많은 테이블이라면 direct path read 는 비용이 크다고 할 수 있는 것이다. 특히 반복해서 access 한다면 더욱 더!
 
 
