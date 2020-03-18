@@ -32,3 +32,4 @@ $ git push origin [git username]
 [2020-03-09-github-pages-guide2](2020-03-09-github-pages-guide2.md)<br/>
 [스베덴보리-01](스베덴보리-01.md)<br/>
 [direct-path-read-01](2020-03-17-adaptive-direct-path-load.md)<br/>
+[2020-03-18-전문순서역전현상_XA_RAC](2020-03-18-전문순서역전현상_XA_RAC.md)<br/>
