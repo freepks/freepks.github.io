@@ -12,6 +12,7 @@ tags:
   - Direct path read
   - latch: row cache objects
   - block cleanout
+  - performance
 #	태그는 자유롭게 개수 제한 없이 입력할 수 있습니다. 아래는 예시입니다.
 # ex)Cloud: k8s, Docker, CloudZ, Azure, AWS, Google Cloud
 #	  AI: Abril, Tensor Flow
