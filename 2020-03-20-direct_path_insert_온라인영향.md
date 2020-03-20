@@ -50,7 +50,6 @@ direct path insert 에서는 테이블 세그먼트에 대한 적재작업이 �
 
 <img src="https://freepks.github.io/images/index_maintenance_2.PNG" width="400">
 
-인덱스 갱신작업에 의해 redo log 발생 - 적색표시부분
 
 <br/>
 장애원인을 정리해 보면,<br/>
@@ -64,7 +63,9 @@ parallel direct path insert 작업중 index maintenance 단계에서 초당 redo
              gc current block busy
              gc buffer busy acquire
 
-문제 재발방지를 위해 아래와 같은 대책들을 생각해 볼 수 있겠다.
+
+
+### 문제 재발방지를 위해 아래와 같은 대책들을 생각해 볼 수 있겠다.
 
 1. parallel direct path insert 작업 전에 인덱스들을 drop 했다가 작업 후에 recreate 하는 방안
 
@@ -91,7 +92,7 @@ parallel direct path insert 작업중 index maintenance 단계에서 초당 redo
 
    - 온라인 TR 들에게 영향이 적은 시간대로 이동
 
-## 결론
+### 결론
 
 direct path insert 는 테이블을 먼저 적재한 후에 일괄적으로 인덱스 갱신작업을 수행한다. 이때 redo log 발생량이 급격히 많아진다.(nologging 옵션을 주어도 인덱스 갱신때는 redo 발생을 피할 수 없음)
 그런데 이걸 parallel 로 수행하면 redo log 발생량은 parallel degree 에 비례해서 더 많아지게 되고 IO 에는 부담이 가중되게 된다.<br/>
