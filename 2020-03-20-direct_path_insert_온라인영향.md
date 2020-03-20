@@ -45,26 +45,15 @@ commit;
 
 
 Execution Plan
------------------------------------------------------------
-   0      INSERT STATEMENT Optimizer=FIRST_ROWS (Cost=231 Card=597K Bytes=37M)
-   1    0   PX COORDINATOR
-   2    1     PX SEND (QC (RANDOM)) OF 'SYS.:TQ10001' (Cost=231 Card=597K Bytes=37M) 
-   3    2       **INDEX MAINTENANCE** OF 'DIR_TEST' (PARALLEL_COMBINED_WITH_PARENT)
-   4    3         PX RECEIVE (Cost=231 Card=597K Bytes=37M) (PARALLEL_COMBINED_WITH_P
-   5    4           PX SEND (RANGE) OF 'SYS.:TQ10000' (Cost=231 Card=597K Bytes=37M) 
-   6    5             LOAD AS SELECT OF 'DIR_TEST' (PARALLEL_COMBINED_WITH_PARENT)
-   7    6               PX BLOCK (ITERATOR) (Cost=231 Card=597K Bytes=37M) (PARALLEL_
-   8    7                 TABLE ACCESS (FULL) OF 'DIR_SRC' (TABLE) (Cost=231 Card=597
-
------------------------------------------------------------
+<img src="https://freepks.github.io/images/index_maintenance_1.PNG" width="600">
 
 direct path insert 에서는 테이블 세그먼트에 대한 적재작업이 먼저 수행되고 난 후에 인덱스 갱신(index maintenance) 작업이 일괄적으로 수행되게 되는데, 이때 인덱스 Leaf node split 이 발생되게 되며(Deacon 해당지표: LFsplt) 바로 이 때문에 redo log 발생량(Deacon 해당지표: Rdo[m])이 급격하게 많아지는 것이다.(parallel degree 가 높을수록 redo log 발생량은 많아짐.)<br/>
 장애당시 디콘(Deacon) Instance Monitor 에서 초당 redo log 양이 200 mb 까지 높아지자 서비스 품질이 나빠지기 시작했다.(서버 IO 성능에 따라 다름. IO 성능이 안좋다면 초당 50 mb 만 되어도 장애가능)
 <br/>
 
-<center><img src="https://freepks.github.io/images/index_maintenance_부하.PNG" width="600"></center>
+<img src="https://freepks.github.io/images/index_maintenance_2.PNG" width="400">
 
-<center>인덱스 갱신작업에 의해 redo log 발생 - 적색표시부분</center>
+인덱스 갱신작업에 의해 redo log 발생 - 적색표시부분
 
 <br/>
 장애원인을 정리해 보면,<br/>
