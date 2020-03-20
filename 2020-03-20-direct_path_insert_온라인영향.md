@@ -62,7 +62,7 @@ direct path insert 에서는 테이블 세그먼트에 대한 적재작업이 �
 장애당시 디콘(Deacon) Instance Monitor 에서 초당 redo log 양이 200 mb 까지 높아지자 서비스 품질이 나빠지기 시작했다.(서버 IO 성능에 따라 다름. IO 성능이 안좋다면 초당 50 mb 만 되어도 장애가능)
 <br/>
 
-<center><img src="https://freepks.github.io/images/index_maintenance.PNG" width="600"></center>
+<center><img src="https://freepks.github.io/images/index_maintenance_부하.PNG" width="600"></center>
 
 <center>인덱스 갱신작업에 의해 redo log 발생 - 적색표시부분</center>
 
