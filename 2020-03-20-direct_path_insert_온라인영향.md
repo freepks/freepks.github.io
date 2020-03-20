@@ -42,10 +42,11 @@ Execution Plan<br/>
 
 direct path insert 에서는 테이블 세그먼트에 대한 적재작업이 먼저 수행되고 난 후에 인덱스 갱신(index maintenance) 작업이 일괄적으로 수행되게 되는데, 이때 인덱스 Leaf node split 이 발생되게 되며(Deacon 해당지표: LFsplt) 바로 이 때문에 redo log 발생량(Deacon 해당지표: Rdo[m])이 급격하게 많아지는 것이다.(아래 그림 적색부분)
 
-> parallel degree 가 높을수록 redo log 발생량은 많아짐.<br/><br/>
+> parallel degree 가 높을수록 초당 redo log 발생량은 많아짐.<br/>
 
+장애당시 디콘(Deacon) Instance Monitor 에서 초당 redo log 양이 200 mb 까지 높아지자 서비스 품질이 나빠지기 시작했다.
 
-장애당시 디콘(Deacon) Instance Monitor 에서 초당 redo log 양이 200 mb 까지 높아지자 서비스 품질이 나빠지기 시작했다.(서버 IO 성능에 따라 다름. IO 성능이 안좋다면 초당 50 mb 만 되어도 장애가능)
+> 서버 IO 성능에 따라 다름. IO 성능이 안좋다면 초당 50 mb 만 되어도 장애가능
 <br/>
 
 <img src="https://freepks.github.io/images/index_maintenance_2.PNG" width="400">
@@ -64,7 +65,7 @@ parallel direct path insert 작업중 index maintenance 단계에서 초당 redo
              gc buffer busy acquire
 
 
-
+<br/><br/>
 ### 문제 재발방지를 위해 아래와 같은 대책들을 생각해 볼 수 있겠다.
 
 1. parallel direct path insert 작업 전에 인덱스들을 drop 했다가 작업 후에 recreate 하는 방안
