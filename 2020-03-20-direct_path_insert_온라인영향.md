@@ -64,7 +64,7 @@ direct path insert 에서는 테이블 세그먼트에 대한 적재작업이 �
 
 ## 그림
 
-<center><img src="https://freepks.github.io/images/index_maintenance_부하.PNG" width="600"></center>
+<img src="https://freepks.github.io/images/index_maintenance.PNG" width="600">
 
 
 

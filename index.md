@@ -32,3 +32,4 @@ $ git push origin [git username]
 [direct-path-read-01](2020-03-17-adaptive-direct-path-load.md)<br/>
 [2020-03-18-전문순서역전현상_XA_RAC](2020-03-18-전문순서역전현상_XA_RAC.md)<br/>
 [2020-03-19-성테-네트웍-병목사례](2020-03-19-성테-네트웍-병목사례.md)<br/>
+[2020-03-20-direct_path_insert_온라인영향](2020-03-20-direct_path_insert_온라인영향.md)<br/>
