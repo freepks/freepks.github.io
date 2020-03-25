@@ -13,6 +13,10 @@ Open terminal → 아래 command 입력
 $ git pull origin master
 ```
 
+Fork repository 를 사용할 때 original 과 local 을 동기화시키려면
+```bash
+$ git pull upstream master
+```
 
 # Git에 Commit / Push
 
