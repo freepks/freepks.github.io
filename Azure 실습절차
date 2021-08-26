@@ -1,0 +1,237 @@
+<< 실전 실습작업 절차 >>
+
+##################################
+# 2개의 리소스그룹을 사용함
+#
+#   user16-admin 리소스그룹
+#     
+#     가상머신1
+#     - blob, storage 계정, CDN 용
+#     - 테라폼 스크립트 작업장소
+#     
+#     가상머신2
+#     - 젠킨스 서버용
+#     
+#   user16rg 리소스그룹
+#   
+#     web 서버1
+#     web 서버2
+#     lb(load balancer) 등
+##################################
+
+1. Admin 서버 생성
+
+   - Ubuntu Server 20.04 LTS
+   - 암호사용 freepks / Pass****
+
+2. Blob 생성
+   
+   - 홈 - 리소스만들기 - 스토리지계정
+   - 이름 : user16storage
+   - 컨테이너 추가(img, 컨테이너 수준)
+   - 그림파일 2개 업로드
+   
+     => 그림파일경로: https://user16storage.blob.core.windows.net/img/cat01.PNG
+      
+   
+3. CDN endpoint 생성
+
+   - 이름: user16cdnprofile
+   - endpoint 추가
+     이름 :  user16cdnendpoint
+     원본형식 : 스토리지
+     원본호스트이름 : user16storage.blob.core.windows.net
+     
+     https://user16cdnendpoint.azureedge.net
+     
+     => cdn 그림파일경로 : https://user16cdnendpoint.azureedge.net/img/cat01.PNG
+   
+4. Jenkins 서버 생성
+
+   - 홈 - 리소스만들기 - jenkins bitnami 로 검색 (Jenkins packaged by Bitnami / 무료)
+   - 암호사용 freepks / Pass****
+   
+5. credential 생성
+
+   - cmd 창에서 admin 서버 로그인
+     포탈 - 가상머신 - 연결 - SSH 에서 필요정보 획득하여
+     ssh freepks@20.194.115.238
+     
+   - 명령실행
+   
+        sudo su -
+        apt-get update -y
+        apt-get install azure-cli -y
+   
+   - Azure CLI 로그인 후 구독ID, 테넌트 ID 확인
+   
+        az login
+        => 화면의 url 과 code 를 이용 azure web 에서 인증
+        
+        az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/구독ID"
+
+   - Azure 인증을 위한 변수 등록
+   
+        export ARM_CLIENT_ID="d52ab243-3de3-4bb9-820c-08671861be2d" 
+        export ARM_CLIENT_SECRET="59a52f7a-c741-402b-9ee1-0223247e64e4" 
+        export ARM_SUBSCRIPTION_ID="6da25f66-689f-49b9-ab5e-4d9619cce313" 
+        export ARM_TENANT_ID="029675e3-1fa6-457d-a5cd-bdabb958e953"
+
+        # <참고>
+        # root@user16-adminVM:~# az login
+        # To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code SGXMQU8WZ to authenticate.
+        # [
+        #   {
+        #   "cloudName": "AzureCloud",
+        #   "id": "6da25f66-689f-49b9-ab5e-4d9619cce313",  /*구독ID ARM_SUBSCRIPTION_ID*/
+        #   "isDefault": true,
+        #   "name": "종량제3",
+        #   "state": "Enabled",
+        #   "tenantId": "029675e3-1fa6-457d-a5cd-bdabb958e953", /*ARM_TENANT_ID*/
+        #   "user": {
+        #     "name": "user16@gkn2025hotmail.onmicrosoft.com",
+        #     "type": "user"
+        #   }
+        #   }
+        # ]
+        # root@user16-adminVM:~# az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/6da25f66-689f-49b9-ab5e-4d9619cce313"
+        # Creating a role assignment under the scope of "/subscriptions/6da25f66-689f-49b9-ab5e-4d9619cce313"
+        #   Retrying role assignment creation: 1/36
+        # {
+        #   "appId": "d52ab243-3de3-4bb9-820c-08671861be2d",    /*ARM_CLIENT_ID*/
+        #   "displayName": "azure-cli-2021-08-26-05-22-33",
+        #   "name": "http://azure-cli-2021-08-26-05-22-33",
+        #   "password": "59a52f7a-c741-402b-9ee1-0223247e64e4", /*ARM_CLIENT_SECRET*/
+        #   "tenant": "029675e3-1fa6-457d-a5cd-bdabb958e953"    /*ARM_TENANT_ID*/
+        # }
+
+6. Terraform 다운로드
+
+   - 테라폼 설치
+   
+     wget https://releases.hashicorp.com/terraform/1.0.4/terraform_1.0.4_linux_amd64.zip
+
+   - 테라폼 압축을 풀기 위해 unzip 패키지 설치
+   
+     apt install unzip 
+     unzip terraform_1.0.4_linux_amd64.zip
+
+   - 테라폼 파일을 /bin 으로 복사
+   
+     cp terraform /bin
+
+   - 테라폼 버전 확인
+   
+     terraform version
+
+
+7. ssh-keygen
+
+   - 리눅스 서버로 SSH 접속을 위해서는 1)"계정/패스워드"로 접속하거나, 2)"계정/SSH RSA Key"로 접속해야 하는데, RSA키는 아래 명령어로 생성 가능
+     (명령실행 후 엔터키 3회)
+   
+     ssh-keygen -t rsa -b 4096 -m PEM
+
+
+8. Terraform 스크립트 파일 작성/실행
+
+   - clone 스크립트 파일
+   
+     git clone https://github.com/lormadus/azure-lb-demo.git
+     
+     mkdir regionA
+     
+     cd azure-lb-demo
+     cp *.tf ../regionA/
+     cp web.sh ../regionA/
+     
+     #테라폼 initialization
+     terraform init
+     
+     #vi 로 .tf 파일들 편집하며 실행
+     #편리한 아래 vi 치환명령 사용
+     %s/david/user16/g
+     
+     #테라폼 스크립트파일 실행
+     terraform plan
+     terraform apply
+
+9. Github repository 2개 작성
+
+   - GitHub 사이트 접속
+   
+     https://github.com/freepks
+
+   - token 생성 (완료)
+   
+     settings - developer settings - personal access tokens
+     
+   - repository 2개(rep01, rep02) 생성후 index.html 생성
+   
+      . rep01 의 index.html
+   
+        <html>
+        <body>
+        <img src="https://user16cdnendpoint.azureedge.net/img/cat01.PNG"> 
+        </body>
+        </html>
+
+      . rep02 의 index.html
+   
+        <html>
+        <body>
+        <img src="https://user16cdnendpoint.azureedge.net/img/cat02.PNG"> 
+        </body>
+        </html>
+
+
+10. Jenkins 접속
+
+    - cmd 창에서
+      ssh freepks@52.141.23.76 으로 접속 (젠킨스VM 의 공용IP)
+      cd /home/bitnami
+      cat bitnami_credentials
+      
+        ******************************************************************************
+        The default username and password is 'user' and 'Yr9jvdL67XPv'.
+        ******************************************************************************
+        => 브라우저에서 52.141.23.76(젠킨스VM 의 공용IP) 으로 접속후 위 정보로 젠킨스 로그인
+
+    - Publish over SSH 플러그인 설치
+    
+      . Jenkins 관리 - 플러그인 관리 - 설치가능탭에서 Publish over SSH 찾아서 설치및 젠킨스 restart
+    
+    - SSH 접속을 위한 서버등록(web 서버 2개)
+    
+      . 시스템설정 - Publish over SSH - SSH server 추가
+      . name : web1
+      . hostname : lb 의 IP
+      . username : WEB 서버1 의 userid (17.vm1.tf 에서 확인, 여기서는 azureuser)
+      . 고급탭 ->
+          port 입력 (lb 의 인바운드 NAT 규칙에서 port 확인, 여기서는 50001)
+          password 입력 (17.vm1.tf 에서 확인, 여기서는 Pass****)
+      . Test configuration
+    
+    - item(job) 등록 (web 서버 2개)
+    
+      . 새로운 ITEM - Freestyle project, item 이름은 web1, web2
+      . 소스코드관리 : Git
+        Repository URL : https://github.com/freepks/demorep1.git
+        Credential : Github 의 userid 와 token 으로 인증 
+        Branches to build : */main
+        빌드후 조치 : 
+           Send build artifect over SSH 선택
+           Source files : **
+           Exec command : sudo cp index.html /var/www/html
+           
+    - web 서버 2개(item 2개 각각 Build Now) 배포후 브라우저에서 lb IP 로 접근하여 그림 (2개가 랜덤하게) 뜨는지 확인
+    
+    
+[참고] web 서버 ssh 로 들어가서 배포된 파일 직접 확인 방법 (IP는 lb ip (공용ip)를 넣는다)
+
+    ssh -i ~/.ssh/id_rsa azureuser@20.41.97.69 -p 50001
+    sudo su -
+    cd /var/www/html
+    cat index.html
+
+
